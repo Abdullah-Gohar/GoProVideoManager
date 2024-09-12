@@ -5,6 +5,7 @@ import os
 from collections import defaultdict
 import json
 from move import move_files
+from merge import merge_files
 
 
 def parse_creation_date(date_str):
@@ -67,7 +68,7 @@ def group_by_attribute(data, index):
     return dict(grouped)
 
 
-def main(PATH):
+def main(PATH, merge_status = False, delete = False):
     files = list_files_in_folder(PATH)
     files  = [os.path.join(PATH, file) for file in files]
     creation_dates = []
@@ -87,3 +88,6 @@ def main(PATH):
     creation_dates = group_by_attribute(creation_dates, 1)
 
     move_files(creation_dates)
+    
+    if merge_status:
+        merge_files(PATH,delete)
