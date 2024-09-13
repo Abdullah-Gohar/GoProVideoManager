@@ -86,36 +86,59 @@ def flatten_folder(root_folder):
         # If the directory is not the root folder and it's empty, remove it
         if dirpath != root_folder and not os.listdir(dirpath):
             os.rmdir(dirpath)
+            
+            
+def parse_file(file_path):
+    if not file_path.endswith(".MP4"):
+        return 0
+        # print(file_path)
+    try:
+        creation_date = get_video_creation_time(file_path)
+        epoch = parse_creation_date(creation_date)
+        creation_date = creation_date.split(": ",1)[1].strip()
+        
+        
+    except:
+        return None
+        
+    return [file_path,creation_date,epoch]
 
-
-def main(PATH, merge_status = False, delete = False):
+def get_parsing_paths(PATH):
     files = list_files_in_folder(PATH)
     files  = [os.path.join(PATH, file) for file in files]
-    creation_dates = []
-    i = 1
-    length = len([file for file in files if file.endswith(".MP4")])
-    for file_path in files:
-        if not file_path.endswith(".MP4"):
-            continue
-        # print(file_path)
-        try:
-            creation_date = get_video_creation_time(file_path)
-            epoch = parse_creation_date(creation_date)
-            creation_date = creation_date.split(": ",1)[1].strip()
-            
-            creation_dates.append([file_path,creation_date,epoch])
-            
-            print(f"{i}/{length} files processed")
-            i += 1
-        except:
-            print(file_path)
+    
+    return files
 
+def sort_data(creation_dates):
     creation_dates.sort(key=lambda x: x[1])
 
         
     creation_dates = group_by_attribute(creation_dates, 1)
+    
+    return creation_dates
 
-    move_files(creation_dates)
+def parse_files(PATH):
+    files = get_parsing_paths(PATH)
+    creation_dates = []
+    i = 1
+    length = len([file for file in files if file.endswith(".MP4")])
+    for file_path in files:
+        data = parse_file(file_path)
+        if data:
+            creation_dates.append(data)
+            
+            print(f"{i}/{length} files processed")
+            i += 1
+
+
+    creation_dates = sort_data(creation_dates)
+    
+    return creation_dates
+
+def main(PATH, merge_status = False, delete = False):
+    
+    date_data = parse_files(PATH)
+    move_files(date_data)
     
     if merge_status:
         merge_files(PATH,delete)

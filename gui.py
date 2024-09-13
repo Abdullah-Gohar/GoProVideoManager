@@ -41,8 +41,17 @@ def select_folder():
 def toggle_merge():
     if merge_videos_var.get():
         delete_checkbox.config(state=tk.NORMAL)
+        flatten_checkbox.config(state=tk.DISABLED)
     else:
         delete_checkbox.config(state=tk.DISABLED)
+        flatten_checkbox.config(state=tk.NORMAL)
+        
+def toggle_flatten():
+    if flatten_var.get():
+        merge_checkbox.config(state=tk.DISABLED)
+        delete_checkbox.config(state=tk.DISABLED)
+    else:
+        merge_checkbox.config(state=tk.NORMAL)
 
 def run_process():
     if folder_selected:
@@ -84,7 +93,7 @@ delete_checkbox = tk.Checkbutton(root, text="Delete clips", variable=delete_clip
 delete_checkbox.pack(pady=5)
 
 # Reverse Split checkbox (disabled initially)
-flatten_checkbox = tk.Checkbutton(root, text="Reverse Split", variable=flatten_var, state=tk.DISABLED, bg="#2E2E2E", fg="white", selectcolor="#4C4CFF", font=("Arial", 12))
+flatten_checkbox = tk.Checkbutton(root, text="Reverse Split", variable=flatten_var, command = toggle_flatten, state=tk.DISABLED, bg="#2E2E2E", fg="white", selectcolor="#4C4CFF", font=("Arial", 12))
 flatten_checkbox.pack(pady=5)
 
 # Run button (disabled initially)

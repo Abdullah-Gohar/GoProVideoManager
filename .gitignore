@@ -1,2 +1,4 @@
 venv/
 mp4_merger/target/
+__pycache__/
+
